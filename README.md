@@ -57,7 +57,7 @@ using a custom build script. Add the `slint-build` crate to your `Cargo.toml`:
 
 ```toml
 [build-dependencies]
-slint-build = "0.1.0"
+slint-build = "1.10.0"
 ```
 
 Then, create a `build.rs` file in your project root with the following content:
