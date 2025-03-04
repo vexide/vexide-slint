@@ -1,6 +1,10 @@
 #![no_std]
 #![no_main]
 
+// NOTE:
+// This example WILL NOT BUILD by default, because it lacks a build.rs
+// script. If you want to build this, see README.md for instructions.
+
 slint::include_modules!();
 
 use vexide::prelude::{Compete, CompeteExt as _, Peripherals};
