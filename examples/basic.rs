@@ -7,7 +7,7 @@
 
 slint::include_modules!();
 
-use vexide::prelude::{Compete, CompeteExt as _, Peripherals};
+use vexide::prelude::*;
 use vexide_slint::initialize_slint_platform;
 
 struct Robot {
