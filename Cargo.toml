@@ -39,3 +39,6 @@ slint = { version = "1.10.0", default-features = false, features = [
 
 [dev-dependencies]
 vexide = "0.7.0-beta.3"
+
+[build-dependencies]
+slint-build = "1.10.0"
