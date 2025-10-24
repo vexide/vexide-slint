@@ -13,7 +13,7 @@ jobs:
       - name: Setup | Toolchain
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2024-02-07
+          toolchain: nightly
           components: rust-src
 
       - name: Check
