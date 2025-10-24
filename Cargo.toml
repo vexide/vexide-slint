@@ -20,22 +20,15 @@ slot = 1
 icon = "cool-x"
 compress = true
 
-[package.metadata.docs.rs]
-targets = ["armv7a-none-eabi"]
-
 [dependencies]
-# TODO: also update this
-vexide = { version = "0.7.0", default-features = false, features = [
-  "core",
-  "devices",
-  "async",
-] }
-slint = { version = "1.10.0", default-features = false, features = [
+vexide = "0.8.0-alpha.2"
+slint = { version = "1.12.1", default-features = false, features = [
   "compat-1-2",
+  "std",
   "unsafe-single-threaded",
-  "libm",
   "renderer-software",
+  # TODO: don't think we need libm, but needs testing 
 ] }
 
 [dev-dependencies]
-vexide = "0.7.0"
+vexide = "0.8.0-alpha.2"

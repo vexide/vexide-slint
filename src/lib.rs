@@ -78,7 +78,6 @@
 //! }
 //! ```
 
-#![no_std]
 #![allow(clippy::needless_doctest_main)] // build script example should contain main function
 
 extern crate alloc;
@@ -92,8 +91,8 @@ use slint::{
     },
     LogicalPosition, PhysicalPosition, PhysicalSize, Rgb8Pixel,
 };
-use vexide::devices::display::{Display, Rect, TouchEvent, TouchState};
-use vexide::time::Instant;
+use std::time::Instant;
+use vexide::display::{Display, Rect, TouchEvent, TouchState};
 
 /// A Slint platform implementation for the V5 Brain screen.
 ///
@@ -143,7 +142,7 @@ impl V5Platform {
             *last_event = Some(event);
             return None;
         }
-        let physical_pos = PhysicalPosition::new(event.x.into(), event.y.into());
+        let physical_pos = PhysicalPosition::new(event.point.x.into(), event.point.y.into());
         let position = LogicalPosition::from_physical(physical_pos, 1.0);
         let window_event = match event.state {
             TouchState::Released => WindowEvent::PointerReleased {
@@ -188,7 +187,6 @@ impl Platform for V5Platform {
                         Display::VERTICAL_RESOLUTION as _,
                     ),
                     buf,
-                    Display::HORIZONTAL_RESOLUTION.into(),
                 );
             });
 
