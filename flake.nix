@@ -1,7 +1,7 @@
 {
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    cargo-v5.url = "github:vexide/cargo-v5?ref=upstreamed-target"; # FIXME: switch to main when merged
+    cargo-v5.url = "github:vexide/cargo-v5";
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
@@ -33,6 +33,7 @@
                 "rust-analyzer"
                 "rust-src"
                 "clippy"
+                "llvm-tools"
               ];
             })
           ];
