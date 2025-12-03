@@ -1,4 +1,4 @@
-//! Implementation of Slint's TargetPixel for the Color (RGBA) type used in
+//! Implementation of Slint's TargetPixel for the Color (BGR0) type used in
 //! vexide.
 
 use slint::platform::software_renderer::TargetPixel;
