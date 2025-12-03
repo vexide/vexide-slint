@@ -83,11 +83,11 @@
 mod target_pixel;
 
 use slint::{
-    platform::{
-        software_renderer::{MinimalSoftwareWindow, RepaintBufferType, TargetPixel},
-        Platform, PointerEventButton, WindowEvent,
-    },
     LogicalPosition, PhysicalPosition, PhysicalSize,
+    platform::{
+        Platform, PointerEventButton, WindowEvent,
+        software_renderer::{MinimalSoftwareWindow, RepaintBufferType, TargetPixel},
+    },
 };
 use std::{cell::RefCell, rc::Rc, time::Instant};
 use vexide::display::{Display, Rect, TouchEvent, TouchState};
@@ -182,13 +182,12 @@ impl Platform for V5Platform {
                 // still handle the dirty regions properly.
                 let dirty_regions = renderer.render(&mut buf, Display::HORIZONTAL_RESOLUTION as _);
 
-                let buf = 
-                    // SAFETY: The buffer is a valid slice of ColorPixel, which
-                    // is guaranteed to have the same size and alignment as Color
-                    // (being a newtype).
-                    // In turn, Color is guaranteed to be a valid representation
-                    // of a u32 in BGR0 format.
-                    bytemuck::cast_slice_mut::<ColorPixel, u32>(&mut buf);
+                // The buffer is a valid slice of ColorPixel, which
+                // is guaranteed to have the same size and alignment as Color
+                // (being a newtype).
+                // In turn, Color is guaranteed to be a valid representation
+                // of a u32 in BGR0 format.
+                let buf = bytemuck::cast_slice_mut::<ColorPixel, u32>(&mut buf);
                 for (position, size) in dirty_regions.iter() {
                     // Convert the dirty region to a Rect
                     let region = Rect::from_dimensions(
@@ -206,9 +205,7 @@ impl Platform for V5Platform {
                             i32::from(region.bottom_right.x - 1),
                             i32::from(region.bottom_right.y - 1),
                             buf.as_ptr().cast_mut(),
-                            i32::from(
-                                Display::HORIZONTAL_RESOLUTION,
-                            ),
+                            i32::from(Display::HORIZONTAL_RESOLUTION),
                         );
                     }
                 }
