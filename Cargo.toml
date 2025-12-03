@@ -11,7 +11,7 @@ authors = [
 ]
 license = "GPL-3.0-only"
 keywords = ["vex", "vexide", "vex-robotics", "robotics", "slint"]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 
 [package.metadata.v5]
