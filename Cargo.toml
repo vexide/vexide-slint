@@ -21,7 +21,7 @@ icon = "cool-x"
 compress = true
 
 [dependencies]
-vexide = "0.8.0-alpha.2"
+vexide = "0.8.0"
 slint = { version = "1.12.1", default-features = false, features = [
   "compat-1-2",
   "std",
