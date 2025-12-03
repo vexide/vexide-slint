@@ -83,11 +83,11 @@
 mod target_pixel;
 
 use slint::{
-    LogicalPosition, PhysicalPosition, PhysicalSize,
     platform::{
-        Platform, PointerEventButton, WindowEvent,
         software_renderer::{MinimalSoftwareWindow, RepaintBufferType, TargetPixel},
+        Platform, PointerEventButton, WindowEvent,
     },
+    LogicalPosition, PhysicalPosition, PhysicalSize,
 };
 use std::{cell::RefCell, rc::Rc, time::Instant};
 use vexide::display::{Display, Rect, TouchEvent, TouchState};
