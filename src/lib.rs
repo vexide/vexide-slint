@@ -80,19 +80,19 @@
 
 #![allow(clippy::needless_doctest_main)] // build script example should contain main function
 
-extern crate alloc;
-use alloc::{boxed::Box, rc::Rc};
-use core::cell::RefCell;
+mod target_pixel;
 
 use slint::{
     platform::{
-        software_renderer::{MinimalSoftwareWindow, RepaintBufferType},
+        software_renderer::{MinimalSoftwareWindow, RepaintBufferType, TargetPixel},
         Platform, PointerEventButton, WindowEvent,
     },
-    LogicalPosition, PhysicalPosition, PhysicalSize, Rgb8Pixel,
+    LogicalPosition, PhysicalPosition, PhysicalSize,
 };
-use std::time::Instant;
+use std::{cell::RefCell, rc::Rc, time::Instant};
 use vexide::display::{Display, Rect, TouchEvent, TouchState};
+
+use crate::target_pixel::ColorPixel;
 
 /// A Slint platform implementation for the V5 Brain screen.
 ///
@@ -105,7 +105,7 @@ pub struct V5Platform {
     display: RefCell<Display>,
 
     buffer: RefCell<
-        [Rgb8Pixel;
+        [ColorPixel;
             Display::HORIZONTAL_RESOLUTION as usize * Display::VERTICAL_RESOLUTION as usize],
     >,
 }
@@ -128,7 +128,7 @@ impl V5Platform {
             last_touch_event: RefCell::new(None),
             #[allow(clippy::large_stack_arrays)] // we got plenty
             buffer: RefCell::new(
-                [Rgb8Pixel::new(0, 0, 0);
+                [ColorPixel::background();
                     Display::HORIZONTAL_RESOLUTION as usize * Display::VERTICAL_RESOLUTION as usize],
             ),
         }
@@ -163,7 +163,7 @@ impl V5Platform {
 impl Platform for V5Platform {
     fn create_window_adapter(
         &self,
-    ) -> Result<alloc::rc::Rc<dyn slint::platform::WindowAdapter>, slint::PlatformError> {
+    ) -> Result<Rc<dyn slint::platform::WindowAdapter>, slint::PlatformError> {
         Ok(self.window.clone())
     }
     fn duration_since_start(&self) -> core::time::Duration {
@@ -177,17 +177,41 @@ impl Platform for V5Platform {
             self.window.draw_if_needed(|renderer| {
                 // Render the UI to our buffer
                 let mut buf = *self.buffer.borrow_mut();
-                renderer.render(&mut buf, Display::HORIZONTAL_RESOLUTION as _);
+                // Currently, Slint does not actually diff the regions and just
+                // passes the entire screen as dirty, but for future-proofing we
+                // still handle the dirty regions properly.
+                let dirty_regions = renderer.render(&mut buf, Display::HORIZONTAL_RESOLUTION as _);
 
-                // Draw the buffer to the screen
-                self.display.borrow_mut().draw_buffer(
-                    Rect::from_dimensions(
-                        [0, 0],
-                        Display::HORIZONTAL_RESOLUTION as _,
-                        Display::VERTICAL_RESOLUTION as _,
-                    ),
-                    buf,
-                );
+                let buf = 
+                    // SAFETY: The buffer is a valid slice of ColorPixel, which
+                    // is guaranteed to have the same size and alignment as Color
+                    // (being a newtype).
+                    // In turn, Color is guaranteed to be a valid representation
+                    // of a u32 in BGR0 format.
+                    bytemuck::cast_slice_mut::<ColorPixel, u32>(&mut buf);
+                for (position, size) in dirty_regions.iter() {
+                    // Convert the dirty region to a Rect
+                    let region = Rect::from_dimensions(
+                        [position.x as _, position.y as _],
+                        size.width as _,
+                        size.height as _,
+                    );
+
+                    // Draw the dirty region to the buffer
+                    // SAFETY: We have ownership of the display.
+                    unsafe {
+                        vex_sdk::vexDisplayCopyRect(
+                            i32::from(region.top_left.x),
+                            i32::from(region.top_left.y),
+                            i32::from(region.bottom_right.x - 1),
+                            i32::from(region.bottom_right.y - 1),
+                            buf.as_ptr().cast_mut(),
+                            i32::from(
+                                Display::HORIZONTAL_RESOLUTION,
+                            ),
+                        );
+                    }
+                }
             });
 
             // Connect V5 touch events to Slint

@@ -3784,7 +3784,9 @@ dependencies = [
 name = "vexide-slint"
 version = "0.1.0"
 dependencies = [
+ "bytemuck",
  "slint",
+ "vex-sdk",
  "vexide",
 ]
 
