@@ -204,7 +204,12 @@ impl Platform for V5Platform {
                             i32::from(region.top_left.y),
                             i32::from(region.bottom_right.x - 1),
                             i32::from(region.bottom_right.y - 1),
-                            buf.as_ptr().cast_mut(),
+                            buf.as_ptr()
+                                .add(
+                                    region.top_left.y * Display::HORIZONTAL_RESOLUTION
+                                        + region.top_left.x,
+                                )
+                                .cast_mut(),
                             i32::from(Display::HORIZONTAL_RESOLUTION),
                         );
                     }
