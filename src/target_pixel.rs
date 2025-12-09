@@ -20,9 +20,3 @@ impl TargetPixel for ColorPixel {
         Self(Color::new(red, green, blue))
     }
 }
-
-impl From<ColorPixel> for Color {
-    fn from(value: ColorPixel) -> Self {
-        value.0
-    }
-}
