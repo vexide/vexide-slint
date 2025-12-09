@@ -4,12 +4,9 @@
 use slint::platform::software_renderer::TargetPixel;
 use vexide::color::Color;
 
-#[repr(C, align(4))]
+#[repr(transparent)]
 #[derive(Default, Debug, Clone, Copy, Eq, PartialEq, Hash, bytemuck::Zeroable, bytemuck::Pod)]
 pub(crate) struct ColorPixel(pub Color);
-
-const _: () = assert!(std::mem::size_of::<ColorPixel>() == std::mem::size_of::<Color>());
-const _: () = assert!(std::mem::align_of::<ColorPixel>() == std::mem::align_of::<Color>());
 
 impl TargetPixel for ColorPixel {
     fn blend(&mut self, color: slint::platform::software_renderer::PremultipliedRgbaColor) {
