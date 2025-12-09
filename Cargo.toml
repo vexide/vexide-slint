@@ -40,5 +40,13 @@ slint = { version = "1.14.1", default-features = false, features = [
   "unsafe-single-threaded",
 ] }
 
+[target.'cfg(not(target_os = "vexos"))'.dependencies]
+slint = { version = "1.14.1", default-features = false, features = [
+  "compat-1-2",
+  "renderer-software",
+  "libm",
+  "std",
+] }
+
 [dev-dependencies]
 vexide = "0.8.0"
