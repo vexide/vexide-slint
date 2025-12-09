@@ -187,7 +187,7 @@ impl Platform for V5Platform {
                 // (being a newtype).
                 // In turn, Color is guaranteed to be a valid representation
                 // of a u32 in BGR0 format.
-                let buf = bytemuck::cast_slice_mut::<ColorPixel, u32>(&mut buf);
+                let buf = bytemuck::must_cast_slice_mut::<ColorPixel, u32>(&mut buf);
                 for (position, size) in dirty_regions.iter() {
                     // Convert the dirty region to a Rect
                     let region = Rect::from_dimensions(
