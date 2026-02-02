@@ -11,8 +11,8 @@ authors = [
 ]
 license = "GPL-3.0-only"
 keywords = ["vex", "vexide", "vex-robotics", "robotics", "slint"]
-version = "0.1.0"
-edition = "2021"
+version = "0.2.0"
+edition = "2024"
 
 [package.metadata.v5]
 upload-strategy = "differential"
@@ -20,22 +20,33 @@ slot = 1
 icon = "cool-x"
 compress = true
 
-[package.metadata.docs.rs]
-targets = ["armv7a-none-eabi"]
-
 [dependencies]
-# TODO: also update this
-vexide = { version = "0.7.0", default-features = false, features = [
-  "core",
-  "devices",
-  "async",
-] }
-slint = { version = "1.10.0", default-features = false, features = [
+bytemuck = { version = "1.24.0", features = ["derive", "must_cast"] }
+vexide = "0.8.0"
+slint = { version = "1.14.1", default-features = false, features = [
   "compat-1-2",
-  "unsafe-single-threaded",
-  "libm",
   "renderer-software",
+  "libm",
+  # While slint has a `std` feature, we don't enable it for binary size reasons.
+  # It appears to inflate the binary by approximately 600 KB.
+] }
+vex-sdk = "0.28.0"
+
+[target.'cfg(target_os = "vexos")'.dependencies]
+slint = { version = "1.14.1", default-features = false, features = [
+  "compat-1-2",
+  "renderer-software",
+  "libm",
+  "unsafe-single-threaded",
+] }
+
+[target.'cfg(not(target_os = "vexos"))'.dependencies]
+slint = { version = "1.14.1", default-features = false, features = [
+  "compat-1-2",
+  "renderer-software",
+  "libm",
+  "std",
 ] }
 
 [dev-dependencies]
-vexide = "0.7.0"
+vexide = "0.8.0"
