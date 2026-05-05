@@ -104,10 +104,7 @@ pub struct V5Platform {
     last_touch_event: RefCell<Option<TouchEvent>>,
     display: RefCell<Display>,
 
-    buffer: RefCell<
-        [ColorPixel;
-            Display::HORIZONTAL_RESOLUTION as usize * Display::VERTICAL_RESOLUTION as usize],
-    >,
+    buffer: RefCell<Vec<ColorPixel>>,
 }
 impl V5Platform {
     /// Create a new [`V5Platform`] from a [`Display`].
@@ -126,11 +123,11 @@ impl V5Platform {
             window,
             display: RefCell::new(display),
             last_touch_event: RefCell::new(None),
-            #[allow(clippy::large_stack_arrays)] // we got plenty
-            buffer: RefCell::new(
-                [ColorPixel::background();
-                    Display::HORIZONTAL_RESOLUTION as usize * Display::VERTICAL_RESOLUTION as usize],
-            ),
+            buffer: RefCell::new(vec![
+                ColorPixel::background();
+                Display::HORIZONTAL_RESOLUTION as usize
+                    * Display::VERTICAL_RESOLUTION as usize
+            ]),
         }
     }
 
@@ -176,7 +173,7 @@ impl Platform for V5Platform {
 
             self.window.draw_if_needed(|renderer| {
                 // Render the UI to our buffer
-                let mut buf = *self.buffer.borrow_mut();
+                let mut buf = self.buffer.borrow_mut();
                 // Currently, Slint does not actually diff the regions and just
                 // passes the entire screen as dirty, but for future-proofing we
                 // still handle the dirty regions properly.
